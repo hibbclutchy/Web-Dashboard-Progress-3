@@ -23,7 +23,7 @@ GOOGLE_SHEETS_RANGE=...
 EXPORT_TOKEN=...
 ```
 
-Server-side akan mengambil data dari Google Sheets REST API v4. Untuk spreadsheet besar, range terbuka seperti `MASTERPROVITAS!A:L` dibaca dalam beberapa chunk agar refresh tidak timeout. Semua kolom A:L, termasuk komoditas dan catatan, tetap dimuat; nilai formula/error yang tidak valid dibersihkan saat parsing. Dashboard otomatis:
+Server-side akan mengambil data dari Google Sheets REST API v4. Untuk spreadsheet besar, range terbuka seperti `namasheet!A:L` dibaca dalam beberapa chunk agar refresh tidak timeout. Semua kolom A:L, termasuk komoditas dan catatan, tetap dimuat; nilai formula/error yang tidak valid dibersihkan saat parsing. Dashboard otomatis:
 
 - Mengambil data saat halaman dibuka dan menyediakan tombol **Refresh**.
 - Mem-parsing kolom `Tahun`, `Bulan`, `Provinsi`, `Kabupaten/Kota`, `Luas Tanam (Ha)`, `Luas Panen (Ha)`, `Produksi (Ton)`, dan `Komoditas`.
@@ -43,7 +43,7 @@ Klik **Export Excel**. Dialog token dapat ditutup dengan tombol **Batal**, ikon 
 Token demo saat ini:
 
 ```text
-AKABIKEDELAI
+(dirahasiakan)
 ```
 
 ## Perbedaan dengan versi Next.js
