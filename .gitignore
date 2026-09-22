@@ -5,3 +5,4 @@ out
 npm-debug.log*
 tsconfig.tsbuildinfo
 .env.local.example
+README.md
