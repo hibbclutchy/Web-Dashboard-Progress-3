@@ -38,9 +38,9 @@
       <b style="font-size: 1.125rem;">AKABI</b>
       <p style="font-size: 10px; font-weight: bold; letter-spacing: 0.22em; text-transform: uppercase; color: #64748b;">Kedelai Insight</p>
     </div>
-    <b style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: #475569; display: none;" class="md:block">@media (min-width: 768px)</b>Dashboard Monitoring
+    <b style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: #475569; display: none;" class="md:block">Dashboard Monitoring</b>
     <div style="margin-left: auto;">
-      <button onclick="toggleDark()">?? Dark Mode</button>
+      <button onclick="toggleDark()">🌙 Dark Mode</button>
     </div>
   </header>
   
@@ -120,14 +120,14 @@
     const totals = data.reduce((sum, r) => ({ planted: sum.planted + r.planted, harvested: sum.harvested + r.harvested, production: sum.production + r.production }), { planted: 0, harvested: 0, production: 0 });
     const ranked = [...data].filter(r => r.harvested > 0).sort((a, b) => productivity(b) - productivity(a));
     const zero = data.filter(r => r.planted > 0 && r.harvested === 0);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const trend = months.map(m => ({ month: m, planted: data.filter(r => r.month === m).reduce((s, r) => s + r.planted, 0), harvested: data.filter(r => r.month === m).reduce((s, r) => s + r.harvested, 0) })).filter(t => t.planted > 0 || t.harvested > 0);
+    const monthsList = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const trend = monthsList.map(m => ({ month: m, planted: data.filter(r => r.month === m).reduce((s, r) => s + r.planted, 0), harvested: data.filter(r => r.month === m).reduce((s, r) => s + r.harvested, 0) })).filter(t => t.planted > 0 || t.harvested > 0);
     
     // Render KPI Cards
     const kpiCards = [
-      { label: 'Total Luas Tanam', value: totals.planted, unit: 'Ha', icon: '??', color: '#e4f6eb' },
-      { label: 'Total Luas Panen', value: totals.harvested, unit: 'Ha', icon: '?', color: '#e4f8ef' },
-      { label: 'Total Produksi', value: totals.production, unit: 'Ton', icon: '??', color: '#fff1dc' }
+      { label: 'Total Luas Tanam', value: totals.planted, unit: 'Ha', icon: '🌱', color: '#e4f6eb' },
+      { label: 'Total Luas Panen', value: totals.harvested, unit: 'Ha', icon: '🌾', color: '#e4f8ef' },
+      { label: 'Total Produksi', value: totals.production, unit: 'Ton', icon: '📦', color: '#fff1dc' }
     ];
     document.getElementById('kpi-cards').innerHTML = kpiCards.map(k => 
       `<div class="glass"><div style="display:inline-flex;align-items:center;justify-content:center;width:2.5rem;height:2.5rem;background:${k.color};border-radius:0.75rem;margin-bottom:0.5rem;font-size:1.2rem">${k.icon}</div><p>${k.label}</p><div style="display:flex;align-items:baseline;gap:0.25rem;margin-top:0.25rem"><b style="font-size:1.5rem;color:#18372a">${money(k.value)}</b><span style="font-size:0.75rem;color:#64748b">${k.unit}</span></div></div>`
@@ -140,42 +140,43 @@
     
     // Early Warning & Zero Report
     document.getElementById('early-warning').innerHTML = ranked.slice(-5).reverse().map(r => 
-      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><AlertTriangle size={14} color="#dc2626"/> <b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">${productivity(r).toFixed(2)} Ku/Ha</span></div>`
+      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">${productivity(r).toFixed(2)} Ku/Ha</span></div>`
     ).join('') || '<p style="padding:0.5rem;color:#64748b">Tidak ada warning</p>';
     
     document.getElementById('zero-report').innerHTML = zero.slice(0,5).map(r => 
-      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><AlertTriangle size={14} color="#d97706"/> <b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">Perlu follow up</span></div>`
+      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">Perlu follow up</span></div>`
     ).join('') || '<p style="padding:0.5rem;color:#64748b">Tidak ada zero report</p>';
     
     // Simple Bar Chart (Vanilla JS)
-    function simpleBarChart(data, elementId, width, height, barColor = '#159a5c') {
+    function simpleBarChart(chartData, elementId, width, height, barColor = '#159a5c') {
       const svgNS = "http://www.w3.org/2000/svg";
       const svg = document.createElementNS(svgNS, "svg");
       svg.setAttribute("width", width);
       svg.setAttribute("height", height);
       svg.style.background = "#fff";
       
-      const maxVal = Math.max(...data.map(d => Math.max(d.planted || d.value || 0, d.harvested || 0)));
-      const barWidth = width / data.length / 2 - 2;
+      const maxVal = Math.max(...chartData.map(d => Math.max(d.planted || d.value || 0, d.harvested || 0)));
+      const barWidth = 200 / chartData.length / 2 - 2;
       
-      data.forEach((d, i) => {
-        const x = i * (width / data.length) + 2;
-        if (d.planted) {
-          const barHeight = (d.planted / maxVal) * (height - 20);
+      chartData.forEach((d, i) => {
+        const x = i * (200 / chartData.length) + 2;
+        if (d.planted || d.value) {
+          const val = d.planted || d.value;
+          const barHeight = (val / maxVal) * (150 - 20);
           const rect = document.createElementNS(svgNS, "rect");
           rect.setAttribute("x", x);
-          rect.setAttribute("y", height - barHeight - 10);
+          rect.setAttribute("y", 150 - barHeight - 10);
           rect.setAttribute("width", barWidth);
           rect.setAttribute("height", barHeight);
-          rect.setAttribute("fill", "#159a5c");
+          rect.setAttribute("fill", barColor);
           rect.setAttribute("rx", 3);
           svg.appendChild(rect);
         }
         if (d.harvested) {
-          const barHeight = (d.harvested / maxVal) * (height - 20);
+          const barHeight = (d.harvested / maxVal) * (150 - 20);
           const rect = document.createElementNS(svgNS, "rect");
           rect.setAttribute("x", x + barWidth + 2);
-          rect.setAttribute("y", height - barHeight - 10);
+          rect.setAttribute("y", 150 - barHeight - 10);
           rect.setAttribute("width", barWidth);
           rect.setAttribute("height", barHeight);
           rect.setAttribute("fill", "#f4a261");
@@ -183,9 +184,9 @@
           svg.appendChild(rect);
         }
         const text = document.createElementNS(svgNS, "text");
-        text.setAttribute("x", x + barWidth);
-        text.setAttribute("y", height - 5);
-        text.setAttribute("font-size", "10");
+        text.setAttribute("x", x);
+        text.setAttribute("y", 150);
+        text.setAttribute("font-size", "8");
         text.setAttribute("fill", "#9aa4b5");
         text.textContent = d.month || d.city;
         svg.appendChild(text);
@@ -195,28 +196,24 @@
     }
     
     simpleBarChart(trend, 'trend-chart', '100%', '256', '#159a5c');
-    simpleBarChart(ranked.slice(0,6).map(r => ({ city: r.city, value: Number(productivity(r).toFixed(1)))})) , 'top-wilayah-chart', '100%', '256', '#159a5c');
+    simpleBarChart(ranked.slice(0,6).map(r => ({ city: r.city, value: Number(productivity(r).toFixed(1)) })), 'top-wilayah-chart', '100%', '256', '#159a5c');
     
     // Dark mode toggle
     function toggleDark() { document.body.classList.toggle('dark'); }
-    
-    // Alert triangle icon
-    const AlertTriangle = () => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`;
     
     // Realtime datetime display
     function updateDateTime() {
       const now = new Date();
       const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
       
-      const dayName = days[now.getDay()];
-      const date = now.getDate();
-      const month = months[now.getMonth()];
-      const year = now.getFullYear();
-      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const dayNameStr = days[now.getDay()];
+      const dateNum = now.getDate();
+      const monthStr = months[now.getMonth()];
+      const yearNum = now.getFullYear();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       
-      const datetimeHTML = ${dayName}, ${date} ${month} ${year} - ${time};
+      const datetimeHTML = `${dayNameStr}, ${dateNum}${monthStr} ${yearNum} -${timeStr}`;
       document.getElementById('datetime-display').textContent = datetimeHTML;
     }
     
