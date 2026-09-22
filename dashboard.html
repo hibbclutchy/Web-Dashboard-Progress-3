@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AKABI Kedelai - Dashboard Monitoring</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, Helvetica, sans-serif; background: #f5f9f6; color: #18372a; }
+    .dark { filter: invert(1); }
+    h1, h2, b { font-weight: bold; }
+    p { font-size: 0.875rem; color: #64748b; }
+    .glass { background: rgba(255,255,255,0.8); border: 1px solid rgba(211,228,218,0.9); box-shadow: 0 18px 45px rgba(22,81,51,0.08); backdrop-filter: blur(20px); padding: 1.25rem; border-radius: 1rem; }
+    .grid { display: grid; gap: 1rem; }
+    .flex { display: flex; align-items: center; }
+    .items-center { align-items: center; justify-content: center; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-8 { margin-bottom: 2rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .w-full { width: 100%; }
+    .h-10 { height: 2.5rem; }
+    .p-5 { padding: 1.25rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
+    th { border-bottom: 1px solid #e2e8f0; padding: 0.75rem; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; white-space: nowrap; }
+    td { border-bottom: 1px solid #f1f5f9; padding: 0.75rem; color: #475569; }
+    .font-semibold { font-weight: semibold; }
+    button { cursor: pointer; border: none; background: #fff; padding: 0.625rem; border-radius: 0.75rem; }
+    .logo-img { width: 2.5rem; height: 2.5rem; border-radius: 0.75rem; object-fit: contain; }
+    .datetime-display { font-size: 0.75rem; color: #475569; margin-top: 0.5rem; }
+  </style>
+</head>
+<body id="body">
+  <header class="flex items-center" style="border-bottom: 1px solid #e2e8f0; padding: 1rem; position: relative;">
+    <img src="public/logo-akabi-removebg-preview.png" alt="AKABI" class="logo-img" />
+    <div>
+      <b style="font-size: 1.125rem;">AKABI</b>
+      <p style="font-size: 10px; font-weight: bold; letter-spacing: 0.22em; text-transform: uppercase; color: #64748b;">Kedelai Insight</p>
+    </div>
+    <b style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: #475569; display: none;" class="md:block">@media (min-width: 768px)</b>Dashboard Monitoring
+    <div style="margin-left: auto;">
+      <button onclick="toggleDark()">?? Dark Mode</button>
+    </div>
+  </header>
+  
+  <main style="padding: 2rem; margin-top: 2rem;">
+    <div class="mb-8">
+      <h1 style="font-size: 2rem;">Dashboard Monitoring</h1>
+      <p style="font-size: 0.875rem; color: #64748b;" class="datetime-display" id="datetime-display">Loading...</p>
+      <p>Pantau performa komoditas kedelai secara real-time.</p>
+    </div>
+    
+    <!-- KPI Cards -->
+    <div class="grid sm:grid-cols-2 xl:grid-cols-3 mb-8" id="kpi-cards"></div>
+    
+    <!-- Charts Section -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div class="glass">
+        <h2>Tren Luas Tanam & Panen</h2>
+        <div id="trend-chart" style="height: 16rem; margin-top: 1rem;"></div>
+      </div>
+      <div class="glass">
+        <h2>Top Wilayah</h2>
+        <div id="top-wilayah-chart" style="height: 16rem; margin-top: 1rem;"></div>
+      </div>
+    </div>
+    
+    <!-- Additional Sections -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div class="glass">
+        <h2>Early Warning System</h2>
+        <div id="early-warning" style="margin-top: 1rem; max-height: 15rem; overflow-y: auto;"></div>
+      </div>
+      <div class="glass">
+        <h2>Zero Report</h2>
+        <div id="zero-report" style="margin-top: 1rem; max-height: 15rem; overflow-y: auto;"></div>
+      </div>
+    </div>
+    
+    <!-- Data Table -->
+    <div class="glass mt-6">
+      <h2>Data Tabular Rinci</h2>
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>Tahun</th><th>Bulan</th><th>Provinsi</th><th>Kabupaten/Kota</th><th>Komoditas</th>
+            <th>Luas Tanam (Ha)</th><th>Luas Panen (Ha)</th><th>Produksi (Ton)</th><th>Produktivitas</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </main>
+  
+  <!-- Recharts CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+  
+  <script>
+    const data = [
+      { province:'Jawa Timur',city:'Banyuwangi',planted:1280,harvested:1110,production:1890,month:'Jan',year:'2024',lat:-8.22,lng:114.37 },
+      { province:'Jawa Tengah',city:'Grobogan',planted:1530,harvested:1350,production:2450,month:'Feb',year:'2024',lat:-7.15,lng:110.91 },
+      { province:'Jawa Barat',city:'Indramayu',planted:980,harvested:860,production:1420,month:'Mar',year:'2024',lat:-6.33,lng:108.32 },
+      { province:'Sulawesi Selatan',city:'Gowa',planted:870,harvested:690,production:1090,month:'Apr',year:'2024',lat:-5.31,lng:119.74 },
+      { province:'Aceh',city:'Pidie',planted:540,harvested:420,production:630,month:'May',year:'2024',lat:5.38,lng:95.95 },
+      { province:'NTB',city:'Lombok Timur',planted:760,harvested:540,production:890,month:'Jun',year:'2024',lat:-8.53,lng:116.53 },
+      { province:'Sumatera Utara',city:'Deli Serdang',planted:620,harvested:490,production:730,month:'Jul',year:'2024',lat:3.42,lng:98.7 },
+      { province:'DIY',city:'Gunungkidul',planted:410,harvested:260,production:350,month:'Aug',year:'2024',lat:-8.03,lng:110.61 },
+      { province:'Bali',city:'Buleleng',planted:360,harvested:310,production:510,month:'Sep',year:'2024',lat:-8.11,lng:115.09 },
+      { province:'Lampung',city:'Lampung Timur',planted:690,harvested:530,production:810,month:'Oct',year:'2024',lat:-5.11,lng:105.68 },
+      { province:'Jawa Timur',city:'Jember',planted:970,harvested:800,production:1250,month:'Nov',year:'2024',lat:-8.17,lng:113.7 },
+      { province:'Jawa Tengah',city:'Pati',planted:510,harvested:0,production:0,month:'Dec',year:'2024',lat:-6.75,lng:111.04 }
+    ];
+    
+    function money(value) { return new Intl.NumberFormat('id-ID').format(Math.round(value)); }
+    function productivity(row) { return row.harvested > 0 ? row.production * 10 / row.harvested : 0; }
+    
+    const totals = data.reduce((sum, r) => ({ planted: sum.planted + r.planted, harvested: sum.harvested + r.harvested, production: sum.production + r.production }), { planted: 0, harvested: 0, production: 0 });
+    const ranked = [...data].filter(r => r.harvested > 0).sort((a, b) => productivity(b) - productivity(a));
+    const zero = data.filter(r => r.planted > 0 && r.harvested === 0);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const trend = months.map(m => ({ month: m, planted: data.filter(r => r.month === m).reduce((s, r) => s + r.planted, 0), harvested: data.filter(r => r.month === m).reduce((s, r) => s + r.harvested, 0) })).filter(t => t.planted > 0 || t.harvested > 0);
+    
+    // Render KPI Cards
+    const kpiCards = [
+      { label: 'Total Luas Tanam', value: totals.planted, unit: 'Ha', icon: '??', color: '#e4f6eb' },
+      { label: 'Total Luas Panen', value: totals.harvested, unit: 'Ha', icon: '?', color: '#e4f8ef' },
+      { label: 'Total Produksi', value: totals.production, unit: 'Ton', icon: '??', color: '#fff1dc' }
+    ];
+    document.getElementById('kpi-cards').innerHTML = kpiCards.map(k => 
+      `<div class="glass"><div style="display:inline-flex;align-items:center;justify-content:center;width:2.5rem;height:2.5rem;background:${k.color};border-radius:0.75rem;margin-bottom:0.5rem;font-size:1.2rem">${k.icon}</div><p>${k.label}</p><div style="display:flex;align-items:baseline;gap:0.25rem;margin-top:0.25rem"><b style="font-size:1.5rem;color:#18372a">${money(k.value)}</b><span style="font-size:0.75rem;color:#64748b">${k.unit}</span></div></div>`
+    ).join('');
+    
+    // Render Tables
+    document.getElementById('table-body').innerHTML = data.map(r => 
+      `<tr><td>${r.year}</td><td>${r.month}</td><td><b>${r.province}</b></td><td>${r.city}</td><td>${r.commodity || 'Kedelai'}</td><td>${money(r.planted)}</td><td>${money(r.harvested)}</td><td>${money(r.production)}</td><td>${productivity(r).toFixed(2)}</td></tr>`
+    ).join('');
+    
+    // Early Warning & Zero Report
+    document.getElementById('early-warning').innerHTML = ranked.slice(-5).reverse().map(r => 
+      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><AlertTriangle size={14} color="#dc2626"/> <b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">${productivity(r).toFixed(2)} Ku/Ha</span></div>`
+    ).join('') || '<p style="padding:0.5rem;color:#64748b">Tidak ada warning</p>';
+    
+    document.getElementById('zero-report').innerHTML = zero.slice(0,5).map(r => 
+      `<div style="padding:0.5rem;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:0.5rem"><AlertTriangle size={14} color="#d97706"/> <b>${r.city}</b> <span style="font-size:0.625rem;color:#64748b">Perlu follow up</span></div>`
+    ).join('') || '<p style="padding:0.5rem;color:#64748b">Tidak ada zero report</p>';
+    
+    // Simple Bar Chart (Vanilla JS)
+    function simpleBarChart(data, elementId, width, height, barColor = '#159a5c') {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("width", width);
+      svg.setAttribute("height", height);
+      svg.style.background = "#fff";
+      
+      const maxVal = Math.max(...data.map(d => Math.max(d.planted || d.value || 0, d.harvested || 0)));
+      const barWidth = width / data.length / 2 - 2;
+      
+      data.forEach((d, i) => {
+        const x = i * (width / data.length) + 2;
+        if (d.planted) {
+          const barHeight = (d.planted / maxVal) * (height - 20);
+          const rect = document.createElementNS(svgNS, "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", height - barHeight - 10);
+          rect.setAttribute("width", barWidth);
+          rect.setAttribute("height", barHeight);
+          rect.setAttribute("fill", "#159a5c");
+          rect.setAttribute("rx", 3);
+          svg.appendChild(rect);
+        }
+        if (d.harvested) {
+          const barHeight = (d.harvested / maxVal) * (height - 20);
+          const rect = document.createElementNS(svgNS, "rect");
+          rect.setAttribute("x", x + barWidth + 2);
+          rect.setAttribute("y", height - barHeight - 10);
+          rect.setAttribute("width", barWidth);
+          rect.setAttribute("height", barHeight);
+          rect.setAttribute("fill", "#f4a261");
+          rect.setAttribute("rx", 3);
+          svg.appendChild(rect);
+        }
+        const text = document.createElementNS(svgNS, "text");
+        text.setAttribute("x", x + barWidth);
+        text.setAttribute("y", height - 5);
+        text.setAttribute("font-size", "10");
+        text.setAttribute("fill", "#9aa4b5");
+        text.textContent = d.month || d.city;
+        svg.appendChild(text);
+      });
+      
+      document.getElementById(elementId).appendChild(svg);
+    }
+    
+    simpleBarChart(trend, 'trend-chart', '100%', '256', '#159a5c');
+    simpleBarChart(ranked.slice(0,6).map(r => ({ city: r.city, value: Number(productivity(r).toFixed(1)))})) , 'top-wilayah-chart', '100%', '256', '#159a5c');
+    
+    // Dark mode toggle
+    function toggleDark() { document.body.classList.toggle('dark'); }
+    
+    // Alert triangle icon
+    const AlertTriangle = () => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`;
+    
+    // Realtime datetime display
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      
+      const dayName = days[now.getDay()];
+      const date = now.getDate();
+      const month = months[now.getMonth()];
+      const year = now.getFullYear();
+      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      
+      const datetimeHTML = ${dayName}, ${date} ${month} ${year} - ${time};
+      document.getElementById('datetime-display').textContent = datetimeHTML;
+    }
+    
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+    
+    console.log("Dashboard loaded successfully!");
+  </script>
+</body>
+</html>
