@@ -1,10 +1,9 @@
-﻿import DashboardModeSelection from '../../components/DashboardModeSelection'
+import DashboardModeSelection from '../../components/DashboardModeSelection'
 import { notFound } from 'next/navigation'
 
 const COMMODITIES: Record<string, string> = {
-  dashboardjagung: 'Jagung',
-  dashboardkacangtanah: 'Kacang Tanah',
   dashboardkacanghijau: 'Kacang Hijau',
+  dashboardkacangtanah: 'Kacang Tanah',
   dashboardubikayu: 'Ubi Kayu',
   dashboardubijalar: 'Ubi Jalar',
 }

@@ -8,7 +8,187 @@
 body { margin: 0; background: #f5f9f6; color: #18372a; font-family: Arial, Helvetica, sans-serif; }
 .dark body { background: #061a13; color: #f3fbf5; }
 button, input, select { font: inherit; }
-.glass { background: rgba(255,255,255,.80); border: 1px solid rgba(211,228,218,.9); box-shadow: 0 18px 45px rgba(22,81,51,.08); backdrop-filter: blur(20px); }
-.dark .glass { background: rgba(16,43,32,.78); border-color: rgba(215,255,232,.10); box-shadow: 0 18px 45px rgba(0,0,0,.26); }
+.glass { background: rgba(255,255,255,.58); border: 1px solid rgba(211,228,218,.9); box-shadow: 0 18px 45px rgba(22,81,51,.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.dark .glass { background: rgba(16,43,32,.62); border-color: rgba(215,255,232,.18); box-shadow: 0 18px 45px rgba(0,0,0,.26); }
 .grid-pattern { background-image: linear-gradient(rgba(20,92,57,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(20,92,57,.035) 1px, transparent 1px); background-size: 28px 28px; }
 .dark .grid-pattern { background-image: linear-gradient(rgba(180,255,211,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(180,255,211,.035) 1px, transparent 1px); }
+
+@keyframes akabi-route-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.route-fade-in { animation: akabi-route-fade-in 420ms cubic-bezier(.22,.8,.24,1) both; }
+
+@keyframes akabi-view-old {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(.86); }
+}
+@keyframes akabi-view-new {
+  from { opacity: 0; transform: scale(.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+::view-transition-group(commodity-card-dashboardkedelai),
+::view-transition-group(commodity-card-dashboardkacanghijau),
+::view-transition-group(commodity-card-dashboardkacangtanah),
+::view-transition-group(commodity-card-dashboardubikayu),
+::view-transition-group(commodity-card-dashboardubijalar) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(.22,.8,.24,1);
+}
+::view-transition-old(commodity-card-dashboardkedelai),
+::view-transition-old(commodity-card-dashboardkacanghijau),
+::view-transition-old(commodity-card-dashboardkacangtanah),
+::view-transition-old(commodity-card-dashboardubikayu),
+::view-transition-old(commodity-card-dashboardubijalar) {
+  animation: akabi-view-old 520ms cubic-bezier(.22,.8,.24,1) both;
+}
+::view-transition-new(commodity-card-dashboardkedelai),
+::view-transition-new(commodity-card-dashboardkacanghijau),
+::view-transition-new(commodity-card-dashboardkacangtanah),
+::view-transition-new(commodity-card-dashboardubikayu),
+::view-transition-new(commodity-card-dashboardubijalar) {
+  animation: akabi-view-new 520ms cubic-bezier(.22,.8,.24,1) both;
+}
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(.22,.8,.24,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation-duration: 1ms; }
+}
+/* Landing page commodity cards: styles are scoped to the commodity-card classes. */
+.commodity-card-list {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.commodity-card {
+  --ribbon-color: #20b7a5;
+  --ribbon-dark: #168d80;
+  position: relative;
+  display: block;
+  min-height: 16rem;
+  width: 100%;
+  overflow: visible;
+  isolation: isolate;
+  cursor: pointer;
+  border: 0;
+  border-radius: 1.75rem;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 300ms ease, filter 300ms ease;
+}
+
+.commodity-card:hover {
+  transform: translateY(-0.25rem);
+}
+
+.commodity-card__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 16rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 1.75rem 4.5rem 1.75rem 1.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  border-radius: 1.75rem;
+  background: #fff;
+  box-shadow: 0 18px 45px color-mix(in srgb, var(--ribbon-color) 14%, transparent), 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.commodity-card__icon {
+  display: block;
+  width: 6rem;
+  height: 6rem;
+  object-fit: contain;
+}
+
+.commodity-card__ribbon {
+  position: absolute;
+  top: 1.15rem;
+  right: -0.7rem;
+  z-index: 3;
+  display: flex;
+  height: calc(100% - 2.3rem);
+  width: 3.15rem;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: var(--ribbon-color);
+  border-radius: 0 0.85rem 0.85rem 0;
+  box-shadow: 0.35rem 0.55rem 0.85rem rgba(15, 23, 42, 0.2), 0 0.2rem 0.4rem rgba(15, 23, 42, 0.13);
+}
+
+/* Folded horizontal part crossing the top-right edge of the card. */
+.commodity-card__ribbon::before {
+  content: '';
+  position: absolute;
+  top: -0.7rem;
+  right: 0;
+  width: 7rem;
+  height: 2rem;
+  background: var(--ribbon-color);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0.9rem 100%, 0 0);
+  filter: drop-shadow(0.2rem 0.25rem 0.25rem rgba(15, 23, 42, 0.16));
+}
+
+/* Dark triangular fold where the top ribbon turns down. */
+.commodity-card__ribbon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -0.7rem;
+  width: 0;
+  height: 0;
+  border-top: 0.7rem solid var(--ribbon-dark);
+  border-left: 0.7rem solid transparent;
+}
+
+.commodity-card__ribbon-label {
+  position: relative;
+  z-index: 2;
+  display: block;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.commodity-card--toska { --ribbon-color: #20b7a5; --ribbon-dark: #168d80; }
+.commodity-card--kuning { --ribbon-color: #e9b72f; --ribbon-dark: #b98b16; }
+.commodity-card--oranye { --ribbon-color: #ed8a32; --ribbon-dark: #b95f19; }
+.commodity-card--merah { --ribbon-color: #dc5555; --ribbon-dark: #a83b3b; }
+.commodity-card--ungu { --ribbon-color: #8564c5; --ribbon-dark: #62469b; }
+
+.dark .commodity-card__content {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: #fff;
+}
+
+@media (min-width: 640px) {
+  .commodity-card-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .commodity-card-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .commodity-card { transition: none; }
+}
