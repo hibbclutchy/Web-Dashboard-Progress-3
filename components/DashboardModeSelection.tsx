@@ -1,23 +1,31 @@
+'use client'
+
 import Link from 'next/link'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Activity, HandCoins } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import FoldedRibbon from './FoldedRibbon'
-import { Activity, HandCoins } from 'lucide-react'
 
 type DashboardModeSelectionProps = {
   commodity: string
   basePath: string
 }
 
-const modes = [
+type Mode = {
+  title: string
+  description: string
+  label: string
+  href: string
+  Icon: typeof Activity
+}
+
+const modes: Mode[] = [
   {
     title: 'Monitoring Produktivitas',
     description: 'Lihat data monitoring produktivitas komoditas ini.',
     label: 'Buka Dashboard',
     href: 'monitoring',
     Icon: Activity,
-    iconClass: 'bg-emerald-100 text-emerald-700',
-    linkClass: 'text-emerald-700 dark:text-emerald-300',
-    ribbonColor: '#059669',
   },
   {
     title: 'BANPEM (Bantuan Pemerintah)',
@@ -25,17 +33,30 @@ const modes = [
     label: 'Buka Dashboard',
     href: 'banpem',
     Icon: HandCoins,
-    iconClass: 'bg-sky-100 text-sky-700',
-    linkClass: 'text-sky-700 dark:text-sky-300',
-    ribbonColor: '#0284c7',
   },
 ]
 
+const COMMODITY_ACCENTS: Record<string, string> = {
+  dashboardkedelai: '#E8B93B',
+  dashboardkacanghijau: '#6FBF44',
+  dashboardkacangtanah: '#B98A4E',
+  dashboardubikayu: '#D8C6A0',
+  dashboardubijalar: '#7B4B94',
+}
+
+const cardStyle = (accent: string) => ({
+  '--accent': accent,
+  background: `linear-gradient(145deg, color-mix(in srgb, ${accent} 16%, transparent), transparent 55%, color-mix(in srgb, ${accent} 9%, transparent))`,
+  boxShadow: `0 2px 8px rgba(15, 23, 42, .05), 0 24px 60px color-mix(in srgb, ${accent} 16%, transparent)`,
+}) as CSSProperties
+
 export default function DashboardModeSelection({ commodity, basePath }: DashboardModeSelectionProps) {
-  const transitionName = `commodity-card-${basePath.replace(/^\//, '')}`
+  const reducedMotion = useReducedMotion()
+  const slug = basePath.replace(/^\//, '')
+  const accent = COMMODITY_ACCENTS[slug] || '#6FBF44'
 
   return (
-    <main className="route-fade-in min-h-screen bg-canvas px-5 py-8 text-ink transition-colors duration-500 dark:bg-navy dark:text-white sm:px-8">
+    <main className="min-h-screen bg-canvas px-5 py-8 text-ink transition-colors duration-500 dark:bg-navy dark:text-white sm:px-8">
       <Link
         href="/"
         aria-label="Kembali ke halaman utama AKABI"
@@ -46,9 +67,11 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
         <span>Kembali</span>
       </Link>
 
-      <section
-        className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center py-20"
-        style={{ viewTransitionName: transitionName } as CSSProperties}
+      <motion.section
+        layoutId={`commodity-${slug}`}
+        transition={{ layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] } }}
+        className="glass relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/40 p-6 py-20 text-ink backdrop-blur-xl dark:border-white/10 dark:text-white sm:p-10 sm:py-20"
+        style={cardStyle(accent)}
       >
         <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-[.28em] text-ink/55 dark:text-emerald-200/70">Dashboard AKABI</p>
@@ -61,24 +84,30 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
         </div>
 
         <div className="mt-12 grid w-full gap-6 md:grid-cols-2">
-          {modes.map(({ title, description, label, href, Icon, iconClass, linkClass, ribbonColor }) => (
+          {modes.map(({ title, description, label, href, Icon }) => (
             <Link
               key={href}
               href={`${basePath}/${href}`}
-              className="glass group rounded-[2rem] bg-white/10 p-7 text-ink shadow-soft backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-white/5 dark:text-white"
+              className="group block h-full rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-canvas dark:focus-visible:ring-offset-navy"
             >
-              <div className={`grid h-11 w-11 place-items-center rounded-2xl ${iconClass}`}>
-                <Icon size={21} strokeWidth={2.2} />
+              <div
+                className="glass relative flex h-full min-h-[15rem] flex-col overflow-hidden rounded-3xl border border-white/40 p-7 text-ink backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl dark:border-white/10 dark:text-white"
+                style={cardStyle(accent)}
+              >
+                <div className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-white/5" aria-hidden="true" />
+                <div className="relative grid h-12 w-12 place-items-center rounded-full bg-white/75 text-[var(--accent)] shadow-[inset_0_2px_8px_rgba(15,23,42,.12),0_8px_20px_rgba(255,255,255,.25)] dark:bg-white/90">
+                  <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
+                </div>
+                <h2 className="relative mt-7 text-xl font-extrabold tracking-tight text-ink dark:text-white"><FoldedRibbon color={accent}>{title}</FoldedRibbon></h2>
+                <p className="relative mt-3 max-w-sm text-sm leading-6 text-ink/60 dark:text-slate-300">{description}</p>
+                <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-bold text-[var(--accent)]">
+                  {label} <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">Ã¢â€ â€™</span>
+                </span>
               </div>
-              <h2 className="mt-7 text-xl font-extrabold tracking-tight text-ink dark:text-white"><FoldedRibbon color={ribbonColor}>{title}</FoldedRibbon></h2>
-              <p className="mt-3 max-w-sm text-sm leading-6 text-ink/60 dark:text-slate-300">{description}</p>
-              <span className={`mt-8 inline-flex items-center gap-2 text-sm font-bold ${linkClass}`}>
-                {label} <span className="transition-transform duration-300 group-hover:translate-x-1">&#8594;</span>
-              </span>
             </Link>
           ))}
         </div>
-      </section>
+      </motion.section>
     </main>
   )
 }
