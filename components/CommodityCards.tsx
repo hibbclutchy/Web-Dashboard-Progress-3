@@ -4,14 +4,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useState } from 'react'
+import { flushSync } from 'react-dom'
 import type { CSSProperties } from 'react'
 
 export const COMMODITIES = [
-  { id: 'kedelai', name: 'Kedelai', accent: '#E8B93B', slug: 'dashboardkedelai' },
-  { id: 'kacang-hijau', name: 'Kacang Hijau', accent: '#6FBF44', slug: 'dashboardkacanghijau' },
-  { id: 'kacang-tanah', name: 'Kacang Tanah', accent: '#B98A4E', slug: 'dashboardkacangtanah' },
-  { id: 'ubi-kayu', name: 'Ubi Kayu', accent: '#D8C6A0', slug: 'dashboardubikayu' },
-  { id: 'ubi-jalar', name: 'Ubi Jalar', accent: '#7B4B94', slug: 'dashboardubijalar' },
+  { id: 'kedelai', name: 'Kedelai', accent: '#E8B93B', slug: 'dashboardkedelai', href: '/dashboardkedelai' },
+  { id: 'kacang-hijau', name: 'Kacang Hijau', accent: '#6FBF44', slug: 'dashboardkacanghijau', href: '/dashboardkacanghijau' },
+  { id: 'kacang-tanah', name: 'Kacang Tanah', accent: '#B98A4E', slug: 'dashboardkacangtanah', href: '/dashboardkacangtanah' },
+  { id: 'ubi-kayu', name: 'Ubi Kayu', accent: '#D8C6A0', slug: 'dashboardubikayu', href: '/dashboardubikayu' },
+  { id: 'ubi-jalar', name: 'Ubi Jalar', accent: '#7B4B94', slug: 'dashboardubijalar', href: '/dashboardubijalar' },
 ] as const
 
 type CommodityCardsProps = {
@@ -21,6 +23,11 @@ type CommodityCardsProps = {
 export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
   const router = useRouter()
   const reducedMotion = useReducedMotion()
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+
+  const selectCommodity = (slug: string) => {
+    flushSync(() => setSelectedSlug(slug))
+  }
 
   return (
     <div className="relative isolate">
@@ -31,6 +38,7 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:gap-5 lg:overflow-visible">
         {COMMODITIES.map(commodity => {
           const isActive = activeSlug === commodity.slug
+          const isSelected = selectedSlug === commodity.slug
           const cardStyle = {
             '--accent': commodity.accent,
             background: `linear-gradient(145deg, color-mix(in srgb, ${commodity.accent} 18%, transparent), transparent 55%, color-mix(in srgb, ${commodity.accent} 10%, transparent))`,
@@ -42,16 +50,20 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
           return (
             <motion.div
               key={commodity.id}
-              layout
-              layoutId={`commodity-${commodity.slug}`}
-              transition={{ layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] } }}
+              layoutId={isSelected ? `commodity-${commodity.slug}` : undefined}
+              animate={{ opacity: selectedSlug && !isSelected ? 0 : 1 }}
+              transition={{
+                layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] },
+                opacity: { duration: reducedMotion ? 0 : 0.16, ease: 'easeOut' },
+              }}
               className={`glass group relative flex aspect-square min-w-[13.5rem] flex-1 snap-center overflow-hidden rounded-3xl border border-white/40 text-ink backdrop-blur-xl transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl dark:border-white/10 dark:text-white sm:min-w-[15rem] lg:min-w-0 ${isActive ? 'z-10' : ''}`}
               style={cardStyle}
             >
               <Link
-                href={`/${commodity.slug}`}
-                onMouseEnter={() => router.prefetch(`/${commodity.slug}`)}
-                onFocus={() => router.prefetch(`/${commodity.slug}`)}
+                href={commodity.href}
+                onClick={() => selectCommodity(commodity.slug)}
+                onMouseEnter={() => router.prefetch(commodity.href)}
+                onFocus={() => router.prefetch(commodity.href)}
                 aria-label={`Buka dashboard ${commodity.name}`}
                 aria-current={isActive ? 'page' : undefined}
                 className="relative flex h-full w-full flex-col items-center justify-center p-6 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-inset"

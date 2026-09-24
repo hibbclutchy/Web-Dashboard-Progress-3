@@ -11,13 +11,13 @@ export default function RouteTransition({ children }: { children: React.ReactNod
   return (
     <MotionConfig reducedMotion="user" transition={{ duration, ease: [0.32, 0.72, 0, 1] }}>
       <LayoutGroup id="akabi-routes">
-        <AnimatePresence mode="popLayout" initial={false}>
+        <AnimatePresence mode="sync" initial={false}>
           <motion.div
             key={pathname}
             initial={false}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration, ease: [0.32, 0.72, 0, 1] }}
+            exit={{ opacity: reducedMotion ? 1 : 0.72 }}
+            transition={{ opacity: { duration: reducedMotion ? 0 : 0.16, ease: 'easeOut' } }}
             className="min-h-screen"
           >
             {children}
