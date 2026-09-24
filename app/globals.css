@@ -17,4 +17,9 @@ button, input, select { font: inherit; }
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.route-fade-in { animation: akabi-route-fade-in 420ms cubic-bezier(.22,.8,.24,1) both; }
+.route-fade-in { animation: akabi-route-fade-in 240ms cubic-bezier(.22,.8,.24,1) both; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fade-in { animation: none; }
+}

@@ -1,7 +1,4 @@
-'use client'
-
 import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
 import { Activity, HandCoins } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import FoldedRibbon from './FoldedRibbon'
@@ -50,10 +47,7 @@ const cardStyle = (accent: string) => ({
   boxShadow: `0 2px 8px rgba(15, 23, 42, .05), 0 24px 60px color-mix(in srgb, ${accent} 16%, transparent)`,
 }) as CSSProperties
 
-const sharedTransition = { layout: { duration: 0.46, ease: [0.32, 0.72, 0, 1] as const } }
-
 export default function DashboardModeSelection({ commodity, basePath }: DashboardModeSelectionProps) {
-  const reducedMotion = useReducedMotion()
   const slug = basePath.replace(/^\//, '')
   const accent = COMMODITY_ACCENTS[slug] || '#6FBF44'
 
@@ -68,11 +62,7 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
         <img src="/logo-akabi-removebg-preview.png" alt="Logo AKABI" className="h-6 w-6 rounded-md bg-white object-contain p-0.5" />
         <span>Kembali</span>
       </Link>
-
-      <motion.section
-        layout
-        layoutId={`commodity-${slug}`}
-        transition={reducedMotion ? { layout: { duration: 0 } } : sharedTransition}
+      <section
         className="glass relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/40 p-6 py-20 text-ink backdrop-blur-xl dark:border-white/10 dark:text-white sm:p-10 sm:py-20"
         style={cardStyle(accent)}
       >
@@ -110,7 +100,7 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
             </Link>
           ))}
         </div>
-      </motion.section>
+      </section>
     </main>
   )
 }

@@ -3,9 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { motion, useReducedMotion } from 'framer-motion'
-import { useState } from 'react'
-import { flushSync } from 'react-dom'
 import type { CSSProperties } from 'react'
 
 export const COMMODITIES = [
@@ -22,23 +19,16 @@ type CommodityCardsProps = {
 
 export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
   const router = useRouter()
-  const reducedMotion = useReducedMotion()
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
-
-  const selectCommodity = (slug: string) => {
-    flushSync(() => setSelectedSlug(slug))
-  }
 
   return (
     <div className="relative isolate">
       <div className="pointer-events-none absolute -left-12 top-6 -z-10 h-40 w-40 rounded-full bg-[#E8B93B]/20 blur-3xl dark:bg-[#E8B93B]/10" aria-hidden="true" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-52 w-52 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#6FBF44]/20 blur-3xl dark:bg-[#6FBF44]/10" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-52 w-52 rounded-full -translate-x-1/2 -translate-y-1/2 bg-[#6FBF44]/20 blur-3xl dark:bg-[#6FBF44]/10" aria-hidden="true" />
       <div className="pointer-events-none absolute -right-8 bottom-0 -z-10 h-44 w-44 rounded-full bg-[#7B4B94]/20 blur-3xl dark:bg-[#7B4B94]/10" aria-hidden="true" />
 
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-5 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:gap-5 lg:overflow-visible">
         {COMMODITIES.map(commodity => {
           const isActive = activeSlug === commodity.slug
-          const isSelected = selectedSlug === commodity.slug
           const cardStyle = {
             '--accent': commodity.accent,
             background: `linear-gradient(145deg, color-mix(in srgb, ${commodity.accent} 18%, transparent), transparent 55%, color-mix(in srgb, ${commodity.accent} 10%, transparent))`,
@@ -48,20 +38,13 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
           } as CSSProperties
 
           return (
-            <motion.div
+            <div
               key={commodity.id}
-              layoutId={isSelected ? `commodity-${commodity.slug}` : undefined}
-              animate={{ opacity: selectedSlug && !isSelected ? 0 : 1 }}
-              transition={{
-                layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] },
-                opacity: { duration: reducedMotion ? 0 : 0.16, ease: 'easeOut' },
-              }}
               className={`glass group relative flex aspect-square min-w-[13.5rem] flex-1 snap-center overflow-hidden rounded-3xl border border-white/40 text-ink backdrop-blur-xl transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl dark:border-white/10 dark:text-white sm:min-w-[15rem] lg:min-w-0 ${isActive ? 'z-10' : ''}`}
               style={cardStyle}
             >
               <Link
                 href={commodity.href}
-                onClick={() => selectCommodity(commodity.slug)}
                 onMouseEnter={() => router.prefetch(commodity.href)}
                 onFocus={() => router.prefetch(commodity.href)}
                 aria-label={`Buka dashboard ${commodity.name}`}
@@ -74,7 +57,7 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
                 </span>
                 <span className="relative mt-5 font-sans text-base font-bold leading-tight sm:text-lg">{commodity.name}</span>
               </Link>
-            </motion.div>
+            </div>
           )
         })}
       </div>
