@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 
 export const COMMODITIES = [
@@ -18,8 +17,6 @@ type CommodityCardsProps = {
 }
 
 export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
-  const router = useRouter()
-
   return (
     <div className="relative isolate">
       <div className="pointer-events-none absolute -left-12 top-6 -z-10 h-40 w-40 rounded-full bg-[#E8B93B]/20 blur-3xl dark:bg-[#E8B93B]/10" aria-hidden="true" />
@@ -37,18 +34,16 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
           return (
             <div
               key={commodity.id}
-              className={`glass group relative flex aspect-square min-w-[13.5rem] flex-1 snap-center overflow-hidden rounded-3xl border border-white/40 text-ink backdrop-blur-xl transition-[box-shadow,transform] duration-200 ease-out hover:scale-105 hover:shadow-xl dark:border-white/10 dark:text-white sm:min-w-[15rem] lg:min-w-0 ${isActive ? 'z-10' : ''}`}
+              className={`glass group relative flex aspect-square min-w-[13.5rem] flex-1 snap-center overflow-hidden rounded-3xl border border-white/40 text-ink backdrop-blur-xl transition-transform duration-200 ease-out hover:scale-105 hover:shadow-xl dark:border-white/10 dark:text-white sm:min-w-[15rem] lg:min-w-0 ${isActive ? 'z-10' : ''}`}
               style={cardStyle}
             >
               <Link
                 href={commodity.href}
-                onMouseEnter={() => router.prefetch(commodity.href)}
-                onFocus={() => router.prefetch(commodity.href)}
                 aria-label={`Buka dashboard ${commodity.name}`}
                 aria-current={isActive ? 'page' : undefined}
                 className="relative flex h-full w-full flex-col items-center justify-center p-6 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-inset"
               >
-                <span className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-white/5" aria-hidden="true" />
+                <span className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 dark:bg-white/5" aria-hidden="true" />
                 <span className="relative grid h-24 w-24 place-items-center rounded-full bg-white/75 p-4 shadow-[inset_0_2px_8px_rgba(15,23,42,.12),0_8px_20px_rgba(255,255,255,.25)] transition-transform duration-300 group-hover:scale-105 dark:bg-white/90">
                   <Image src="/logo-akabi-removebg-preview.png" alt="Logo AKABI" width={72} height={72} className="h-full w-full object-contain" />
                 </span>
