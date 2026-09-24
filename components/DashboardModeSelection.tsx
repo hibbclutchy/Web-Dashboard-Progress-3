@@ -17,8 +17,8 @@ type Mode = {
 
 const modes: Mode[] = [
   {
-    title: 'Monitoring Produktivitas',
-    description: 'Lihat data monitoring produktivitas komoditas ini.',
+    title: 'Produktivitas',
+    description: 'Lihat dashboard produktivitas komoditas ini.',
     label: 'Buka Dashboard',
     href: 'monitoring',
     Icon: Activity,
@@ -67,10 +67,10 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
         <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-[.28em] text-ink/55 dark:text-emerald-200/70">Dashboard AKABI</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight text-ink dark:text-white sm:text-4xl">
-            Pilih Mode Dashboard {commodity}
+            Pilih Dashboard {commodity}
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-sm text-ink/60 dark:text-white/65 sm:text-base">
-            Pilih jenis dashboard yang ingin Anda buka untuk melihat informasi komoditas.
+            Pilih jenis dashboard untuk melihat informasi komoditas.
           </p>
         </div>
 
