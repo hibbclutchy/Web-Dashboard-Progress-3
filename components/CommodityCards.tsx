@@ -42,6 +42,7 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
           return (
             <motion.div
               key={commodity.id}
+              layout
               layoutId={`commodity-${commodity.slug}`}
               transition={{ layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] } }}
               className={`glass group relative flex aspect-square min-w-[13.5rem] flex-1 snap-center overflow-hidden rounded-3xl border border-white/40 text-ink backdrop-blur-xl transition-all duration-300 ease-out hover:scale-105 hover:shadow-2xl dark:border-white/10 dark:text-white sm:min-w-[15rem] lg:min-w-0 ${isActive ? 'z-10' : ''}`}

@@ -50,6 +50,8 @@ const cardStyle = (accent: string) => ({
   boxShadow: `0 2px 8px rgba(15, 23, 42, .05), 0 24px 60px color-mix(in srgb, ${accent} 16%, transparent)`,
 }) as CSSProperties
 
+const sharedTransition = { layout: { duration: 0.46, ease: [0.32, 0.72, 0, 1] as const } }
+
 export default function DashboardModeSelection({ commodity, basePath }: DashboardModeSelectionProps) {
   const reducedMotion = useReducedMotion()
   const slug = basePath.replace(/^\//, '')
@@ -68,8 +70,9 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
       </Link>
 
       <motion.section
+        layout
         layoutId={`commodity-${slug}`}
-        transition={{ layout: { duration: reducedMotion ? 0 : 0.46, ease: [0.32, 0.72, 0, 1] } }}
+        transition={reducedMotion ? { layout: { duration: 0 } } : sharedTransition}
         className="glass relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/40 p-6 py-20 text-ink backdrop-blur-xl dark:border-white/10 dark:text-white sm:p-10 sm:py-20"
         style={cardStyle(accent)}
       >
@@ -101,7 +104,7 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
                 <h2 className="relative mt-7 text-xl font-extrabold tracking-tight text-ink dark:text-white"><FoldedRibbon color={accent}>{title}</FoldedRibbon></h2>
                 <p className="relative mt-3 max-w-sm text-sm leading-6 text-ink/60 dark:text-slate-300">{description}</p>
                 <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-bold text-[var(--accent)]">
-                  {label} <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">Ã¢â€ â€™</span>
+                  {label} <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
                 </span>
               </div>
             </Link>
