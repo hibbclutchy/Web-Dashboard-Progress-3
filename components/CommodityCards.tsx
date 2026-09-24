@@ -32,9 +32,6 @@ export default function CommodityCards({ activeSlug }: CommodityCardsProps) {
           const cardStyle = {
             '--accent': commodity.accent,
             background: `linear-gradient(145deg, color-mix(in srgb, ${commodity.accent} 18%, transparent), transparent 55%, color-mix(in srgb, ${commodity.accent} 10%, transparent))`,
-            boxShadow: isActive
-              ? `0 0 0 2px ${commodity.accent}, 0 8px 18px color-mix(in srgb, ${commodity.accent} 22%, transparent), 0 28px 65px rgba(15, 23, 42, .12)`
-              : `0 2px 8px rgba(15, 23, 42, .05), 0 24px 60px color-mix(in srgb, ${commodity.accent} 18%, transparent)`,
           } as CSSProperties
 
           return (

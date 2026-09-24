@@ -35,9 +35,9 @@ export default function Home() {
       </header>
 
       <section className="mx-auto max-w-7xl px-5 pb-12 pt-8 sm:px-8 lg:px-12 lg:pb-16 lg:pt-14">
-        <div className="max-w-2xl">
+        <div className="max-w-none">
           <p className="text-sm font-bold uppercase tracking-[.24em] text-ink/55 dark:text-white/60">Ruang informasi komoditas pangan</p>
-          <h1 className="mt-4 text-5xl font-black uppercase leading-[.9] tracking-[-.055em] sm:text-7xl">Selamat<br />Datang!</h1>
+          <h1 className="mt-4 text-5xl font-black uppercase leading-[.9] tracking-[-.055em] sm:text-7xl">Selamat Datang!</h1>
           <p className="mt-6 text-sm font-semibold tracking-[.24em] text-ink/65 dark:text-white/70">DASHBOARD AKABI!</p>
         </div>
 
