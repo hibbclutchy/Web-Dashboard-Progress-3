@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Activity, HandCoins } from 'lucide-react'
 import type { CSSProperties } from 'react'
-import FoldedRibbon from './FoldedRibbon'
 
 type DashboardModeSelectionProps = {
   commodity: string
@@ -63,8 +62,7 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
         <span>Kembali</span>
       </Link>
       <section
-        className="glass relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/40 p-6 py-20 text-ink backdrop-blur-xl dark:border-white/10 dark:text-white sm:p-10 sm:py-20"
-        style={cardStyle(accent)}
+        className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl flex-col items-center justify-center overflow-hidden p-6 py-20 text-ink dark:text-white sm:p-10 sm:py-20"
       >
         <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-[.28em] text-ink/55 dark:text-emerald-200/70">Dashboard AKABI</p>
@@ -88,10 +86,10 @@ export default function DashboardModeSelection({ commodity, basePath }: Dashboar
                 style={cardStyle(accent)}
               >
                 <div className="pointer-events-none absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-white/5" aria-hidden="true" />
-                <div className="relative grid h-12 w-12 place-items-center rounded-full bg-white/75 text-[var(--accent)] shadow-[inset_0_2px_8px_rgba(15,23,42,.12),0_8px_20px_rgba(255,255,255,.25)] dark:bg-white/90">
+                <div className="relative grid h-12 w-12 shrink-0 place-items-center self-center rounded-full bg-white/75 text-[var(--accent)] shadow-[inset_0_2px_8px_rgba(15,23,42,.12),0_8px_20px_rgba(255,255,255,.25)] dark:bg-white/90">
                   <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
                 </div>
-                <h2 className="relative mt-7 text-xl font-extrabold tracking-tight text-ink dark:text-white"><FoldedRibbon color={accent}>{title}</FoldedRibbon></h2>
+                <h2 className="relative mt-7 text-xl font-extrabold tracking-tight text-ink dark:text-white">{title}</h2>
                 <p className="relative mt-3 max-w-sm text-sm leading-6 text-ink/60 dark:text-slate-300">{description}</p>
                 <span className="relative mt-auto inline-flex items-center gap-2 pt-8 text-sm font-bold text-[var(--accent)]">
                   {label} <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
