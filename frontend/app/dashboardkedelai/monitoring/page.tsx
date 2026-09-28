@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
@@ -34,6 +34,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { apiUrl } from '../../../lib/api'
 import { months, parseSheetValues, regions as demoRegions, Region } from '../../../lib/data'
 
 type DataSource = 'loading' | 'google-sheets' | 'demo' | 'error'
@@ -73,7 +74,7 @@ export default function Dashboard() {
     setDataMessage('Menghubungkan ke Google Sheets...')
 
     try {
-      const response = await fetch(`/api/sheets?refresh=1&t=${Date.now()}`, { cache: 'no-store' })
+      const response = await fetch(apiUrl(`/api/sheets?refresh=1&t=${Date.now()}`), { cache: 'no-store' })
       const payload: SheetResponse = await response.json()
       if (!response.ok) throw new Error(payload.error || 'Gagal mengambil data')
 
@@ -196,7 +197,7 @@ export default function Dashboard() {
     setNotice('')
     let valid = false
     try {
-      const response = await fetch('/api/export-auth', {
+      const response = await fetch(apiUrl('/api/export-auth'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
@@ -352,6 +353,8 @@ function Select({ label, value, set, items }: { label: string; value: string; se
   const choose = (item: string) => { set(item); setOpen(false) }
   return <div className="relative"><span className="block text-[10px] font-bold text-slate-500 dark:text-slate-200">{label}</span><button type="button" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen(current => !current)} className="mt-2 flex h-[38px] w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 text-left text-xs font-semibold text-slate-700 outline-none dark:border-white/10 dark:bg-[#102b20] dark:text-white"><span className="truncate">{value}</span><ChevronDown size={14} className={`ml-2 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} /></button>{open && <div className="absolute left-0 top-[66px] z-50 w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-[#102b20]"><div role="listbox" className="max-h-48 overflow-y-auto">{items.map(item => <button key={item} role="option" aria-selected={item === value} type="button" onClick={() => choose(item)} className={`w-full rounded-lg px-2 py-2 text-left text-xs ${item === value ? 'bg-[#e4f6eb] font-semibold text-[#087443] dark:bg-[#159a5c]/20 dark:text-[#b8efd0]' : 'text-slate-600 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-white/10'}`}>{item}</button>)}</div></div>}</div>
 }
+
+
 
 
 

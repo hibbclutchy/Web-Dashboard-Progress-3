@@ -1,8 +1,36 @@
-node_modules
+﻿node_modules
 .next
 out
+.env
 .env*.local
 npm-debug.log*
-tsconfig.tsbuildinfo
-.env.local.example
-README.md
+frontend/node_modules
+frontend/.next
+backend/node_modules
+backend/.env
+*.tsbuildinfo
+
+# All environment files, except safe examples
+.env.*
+!.env.example
+!.env.local.example
+
+# Credentials and private keys
+service-account*.json
+credentials*.json
+*.pem
+*.key
+
+# Logs, editor and OS files
+*.log
+.DS_Store
+.vscode/
+coverage/
+
+# Exported and local data files
+*.xlsx
+*.csv
+*.sqlite
+*.sqlite3
+*.db
+*.sql
