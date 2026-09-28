@@ -9,7 +9,7 @@ frontend/.next
 backend/node_modules
 backend/.env
 *.tsbuildinfo
-
+README.md
 # All environment files, except safe examples
 .env.*
 !.env.example
