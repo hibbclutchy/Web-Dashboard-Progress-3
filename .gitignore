@@ -1,21 +1,15 @@
-﻿node_modules
-.next
-out
+﻿# Dependencies and build output
+node_modules/
+.next/
+out/
+
+# Environment files (keep only safe examples)
 .env
-.env*.local
-npm-debug.log*
-frontend/node_modules
-frontend/.next
-backend/node_modules
-backend/.env
-*.tsbuildinfo
-README.md
-# All environment files, except safe examples
 .env.*
 !.env.example
 !.env.local.example
 
-# Credentials and private keys
+# Secrets and private keys
 service-account*.json
 credentials*.json
 *.pem
@@ -27,10 +21,26 @@ credentials*.json
 .vscode/
 coverage/
 
-# Exported and local data files
+# Local/exported data
 *.xlsx
 *.csv
 *.sqlite
 *.sqlite3
 *.db
 *.sql
+
+# Internal documentation: keep local, never commit or deploy
+README*
+readme*
+CHANGELOG*
+changelog*
+CONTRIBUTING*
+contributing*
+*.md
+*.mdx
+*.markdown
+*.rst
+*.adoc
+docs/
+doc/
+documentation/
